@@ -1,0 +1,23 @@
+[user]
+    name = Niklas Sauter
+    email = niklas.sauter@gmx.de
+[sendemail]
+    smptserver = mail.gmx.net
+    smptuser = niklas.sauter@gmx.de
+    smptencryption = tls
+    smptserverport = 587
+[core]
+    ignorecase = false
+    pager = less -F -X
+[pull]
+    rebase = false
+[status]
+    short = true
+[log]
+    date = format:%Y-%m-%d %H:%M:%S %z (%A)
+[alias]
+    a = add
+    c = commit
+    d = diff
+    l = log --oneline --graph
+    s = status

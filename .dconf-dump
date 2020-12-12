@@ -1,0 +1,28 @@
+[org/gnome/desktop/input-sources]
+xkb-options=['caps:escape']
+
+[org/gnome/desktop/interface]
+clock-show-weekday=true
+enable-hot-corners=false
+gtk-theme='Adwaita-dark'
+monospace-font-name='Fira Code 11'
+show-battery-percentage=true
+
+[org/gnome/desktop/peripherals/touchpad]
+tap-to-click=true
+
+[org/gnome/desktop/wm/keybindings]
+switch-to-workspace-down=['<Super>j']
+switch-to-workspace-up=['<Super>k']
+
+[org/gnome/nautilus/icon-view]
+default-zoom-level='standard'
+
+[org/gnome/settings-daemon/plugins/media-keys]
+next=['<Super>adiaeresis']
+play=['<Super>udiaeresis']
+previous=['<Super>odiaeresis']
+
+[org/gnome/shell]
+enabled-extensions=['drive-menu@gnome-shell-extensions.gcampax.github.com']
+favorite-apps=['org.mozilla.firefox.desktop', 'org.gnome.Nautilus.desktop', 'kitty.desktop', 'org.gnome.Geary.desktop', 'com.discordapp.Discord.desktop', 'com.spotify.Client.desktop']

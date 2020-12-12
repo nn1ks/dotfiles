@@ -1,0 +1,30 @@
+# Guix
+
+celluloid
+curl
+fd
+flatpak
+geary
+git
+git:send-email
+gnome-boxes
+gnome-tweaks
+kakoune
+kitty
+openssh
+ripgrep
+rust
+rust:cargo
+rust-clippy
+translate-shell
+trash-cli
+tree
+wget
+
+
+# Flatpak
+
+firefox
+discord
+spotify
+bitwarden

@@ -1,0 +1,327 @@
+# Appearance
+add-highlighter global/ number-lines -relative -hlcursor
+add-highlighter global/ show-matching
+set-option global ui_options ncurses_assistant=none
+
+# Completion with tab
+hook global InsertCompletionShow .* %{
+    map window insert <tab> <c-n>
+    map window insert <s-tab> <c-p>
+}
+hook global InsertCompletionHide .* %{
+    unmap window insert <tab> <c-n>
+    unmap window insert <s-tab> <c-p>
+}
+
+# Remap keybinding for user mode
+map global normal , <space>
+map global normal <space> ,
+
+# Keybindings for user mode
+map global user q ": quit<ret>" -docstring "quit"
+map global user w ": write<ret>" -docstring "write"
+map global user e ": write-quit<ret>" -docstring "write and quit"
+map global user c ": comment-line<ret>" -docstring "comment line"
+map global user C ": comment-block<ret>" -docstring "comment block"
+
+# Switch buffers
+map global goto b "<esc>: buffer-next<ret>" -docstring "next buffer"
+map global goto B "<esc>: buffer-previous<ret>" -docstring "previous buffer"
+
+# Copy/paste from clipboard
+map global user y "<a-|>wl-copy<ret>" -docstring "yank to clipboard"
+map global user p "<a-!>wl-paste<ret>" -docstring "paste from clipboard after selection"
+map global user P "!xsel --output --clipboard<ret>" -docstring "paste from clipboard before selection"
+
+# Goto git hunk
+map global goto g "<esc>: git next-hunk<ret>" -docstring "next hunk"
+map global goto G "<esc>: git prev-hunk<ret>" -docstring "previous hunk"
+
+# Show git diff
+hook global WinCreate .* %{ evaluate-commands %sh{
+    is_work_tree=$(cd "$(dirname "${kak_buffile}")" && git rev-parse --is-inside-work-tree 2>/dev/null)
+    [ "${is_work_tree}" = "true" ] && \
+        printf "%s\n" "git show-diff
+            hook global BufWritePost %val{buffile} %{git update-diff}
+            hook global BufReload %val{buffile} %{git update-diff}
+            hook global WinDisplay %val{buffile} %{git update-diff}
+            hook global NormalIdle %val{buffile} %{git update-diff}
+            hook global InsertIdle %val{buffile} %{git update-diff}"
+}}
+
+# Find and edit file
+define-command find -params 1 -shell-script-candidates %{ fd --type f --hidden } %{ edit %arg{1} } \
+    -docstring "find and edit a file"
+map global user g ":find " -docstring "find and edit a file"
+
+# Find and edit file in git repository
+define-command git-find -params 1 -shell-script-candidates %{ git ls-files } %{ edit %arg{1} } \
+    -docstring "find and edit a git file"
+map global user G ":git-find " -docstring "find and edit a git file"
+
+# Map <c-n> to select next snippet placeholder
+def -hidden insert-c-n %{
+    try %{
+        lsp-snippets-select-next-placeholders
+        exec '<a-;>d'
+    } catch %{
+        exec -with-hooks '<c-n>'
+    }
+}
+map global insert <c-n> "<a-;>: insert-c-n<ret>"
+
+# Plugins
+require-module plug
+plug plug https://github.com/alexherbo2/plug.kak %{
+    define-command plug-upgrade -docstring 'plug-upgrade' %{
+        plug-install
+        plug-execute lsp cargo install --locked --force --path .
+        plug-execute tree git submodule update --init --recursive
+        plug-execute tree cargo install --locked --force --path . --features "rust bash json css html"
+    }
+}
+
+plug smarttab https://github.com/andreyorst/smarttab.kak %{
+    set-option global tabstop 4
+    set-option global softtabstop 4
+    hook global WinSetOption .* expandtab
+}
+
+plug prelude https://github.com/alexherbo2/prelude.kak
+plug auto-pairs https://github.com/alexherbo2/auto-pairs.kak
+
+plug search-highlighter https://github.com/alexherbo2/search-highlighter.kak %{
+    set-face global Search black,yellow
+}
+
+plug filetree projects/filetree.kak %{
+    hook global WinSetOption filetype=filetree %{
+        # set-option buffer modelinefmt ""
+        remove-highlighter buffer/number-lines_-relative_-hlcursor # FIXME
+    }
+    map global user t ": filetree-toggle<ret>" -docstring "toggle filetree"
+    map global user T ": filetree-focus<ret>" -docstring "focus filetree"
+    map global user <a-t> ": filetree-refresh<ret>" -docstring "refresh filetree"
+}
+
+# plug kaktree https://github.com/andreyorst/kaktree %{
+#     hook global WinSetOption filetype=kaktree %{
+#         set-option buffer modelinefmt ""
+#         remove-highlighter buffer/number-lines_-relative_-hlcursor # FIXME
+#     }
+#     kaktree-enable
+#     map global user t ": kaktree-toggle<ret>" -docstring "toggle filetree"
+#     map global user T ": kaktree-focus<ret>" -docstring "focus filetree"
+# }
+
+plug fzf https://github.com/andreyorst/fzf.kak %{
+    map global user o ": fzf-mode<ret>f" -docstring "open file with fzf"
+    map global user O ": fzf-mode<ret>g" -docstring "open file contents with fzf"
+    map global user b ": fzf-mode<ret>b" -docstring "open buffer with fzf"
+    map global user B ": fzf-mode<ret><a-b>" -docstring "delete buffer with fzf"
+    map global user g ": fzf-mode<ret>s" -docstring "search in buffer with fzf"
+    map global user j ": fzf-mode<ret>c" -docstring "change directory with fzf"
+    set-option global fzf_default_opts "--layout reverse --info inline --color 16,hl:12,hl+:12,bg+:8,fg+:15,gutter:0,pointer:15,border:8"
+    set-option global fzf_file_command "fd"
+    set-option global fzf_grep_command "rg"
+    set-option global fzf_cd_command "fd --type d"
+}
+
+plug-old lsp https://github.com/kak-lsp/kak-lsp %{
+    set-option global lsp_cmd "kak-lsp -c %val{config}/kak-lsp.toml -s %val{session}"
+    hook global WinSetOption filetype=(rust) %{
+        lsp-enable-window
+
+        # set-option global lsp_server_configuration rust.clippy_preference="on"
+        # set-option global lsp_server_configuration rust-analyzer.checkOnSave.command="clippy"
+
+        # hook global BufWritePre .* lsp-formatting-sync
+        # set-option global lsp_auto_highlight_references true
+        set-option global lsp_diagnostic_line_error_sign "!"
+        set-option global lsp_diagnostic_line_warning_sign "?"
+        set-face global DiagnosticError red+u
+        set-face global DiagnosticWarning yellow+u
+        set-face global InlayDiagnosticError comment
+        set-face global InlayDiagnosticWarning comment
+        set-face global InlayHint comment
+        hook window -group semantic-tokens BufReload .* lsp-semantic-tokens
+        hook window -group semantic-tokens NormalIdle .* lsp-semantic-tokens
+        hook window -group semantic-tokens InsertIdle .* lsp-semantic-tokens
+        hook -once -always window WinSetOption filetype=.* %{
+            remove-hooks window semantic-tokens
+        }
+        # hook window -group rust-inlay-hints BufReload .* rust-analyzer-inlay-hints
+        # hook window -group rust-inlay-hints NormalIdle .* rust-analyzer-inlay-hints
+        # hook window -group rust-inlay-hints InsertIdle .* rust-analyzer-inlay-hints
+        # hook -once -always window WinSetOption filetype=.* %{
+        #     remove-hooks window rust-inlay-hints
+        # }
+
+        declare-option bool inlay_diagnostics_enabled false
+        define-command toggle-inlay-diagnostics -params 1 %{ evaluate-commands %sh{
+            if [ "$kak_opt_inlay_diagnostics_enabled" = "true" ]; then
+                printf "%s\n" "lsp-inlay-diagnostics-disable $1
+                               set-option $1 inlay_diagnostics_enabled false"
+            else
+                printf "%s\n" "lsp-inlay-diagnostics-enable $1
+                               set-option $1 inlay_diagnostics_enabled true"
+            fi
+        }}
+
+        map global user r ": lsp-rename-prompt<ret>" -docstring "rename symbol"
+        map global user a ": lsp-code-actions<ret>" -docstring "code actions"
+        map global user h ": lsp-hover<ret>" -docstring "hover info"
+        map global user H ": lsp-signature-help<ret>" -docstring "signature help"
+        map global user f ": lsp-formatting<ret>" -docstring "format document"
+        map global user i ": toggle-inlay-diagnostics global<ret>" -docstring "toggle inlay diagnostics"
+        map global goto d "<esc>: lsp-definition<ret>" -docstring "definition"
+        map global goto y "<esc>: lsp-type-definition<ret>" -docstring "type definition"
+        map global goto m "<esc>: lsp-goto-next-match<ret>" -docstring "next reference"
+        map global goto M "<esc>: lsp-goto-previous-match<ret>" -docstring "previous reference"
+        map global goto e "<esc>: lsp-find-error --include-warnings<ret>" -docstring "next error or warning"
+        map global goto E "<esc>: lsp-find-error --previous --include-warnings<ret>" -docstring "previous error or warning"
+        map global goto <a-e> "<esc>: lsp-find-error<ret>" -docstring "next error"
+        map global goto <a-E> "<esc>: lsp-find-error --previous<ret>" -docstring "previous error"
+        map global goto i "<esc>: lsp-implementation<ret>" -docstring "implementation"
+        map global goto n "<esc>: lsp-diagnostics<ret>" -docstring "diagnostics"
+        map global goto r "<esc>: lsp-references<ret>" -docstring "references"
+    }
+}
+
+plug-old tree https://github.com/ul/kak-tree %{
+    set-option global tree_cmd "kak-tree -c %val{config}/kak-tree.toml"
+    hook global WinSetOption filetype=(rust) %{
+        declare-user-mode tree_parent
+        map global normal \' ": enter-user-mode tree_parent<ret>" -docstring "enter tree_parent mode"
+        map global tree_parent n "<esc>: tree-select-parent-node<ret>" -docstring "parent node"
+        map global tree_parent b "<esc>: tree-select-parent-node block<ret>" -docstring "block"
+        map global tree_parent f "<esc>: tree-select-parent-node function_item<ret>" -docstring "function"
+        map global tree_parent F "<esc>: tree-select-parent-node function_signature_item<ret>" -docstring "function signature"
+        map global tree_parent c "<esc>: tree-select-parent-node closure_expression<ret>" -docstring "closure"
+        map global tree_parent p "<esc>: tree-select-parent-node parameter<ret>" -docstring "parameter"
+        map global tree_parent P "<esc>: tree-select-parent-node parameters<ret>" -docstring "parameters"
+        map global tree_parent s "<esc>: tree-select-parent-node field_declaration<ret>" -docstring "field declaration"
+        map global tree_parent S "<esc>: tree-select-parent-node field_declaration_list<ret>" -docstring "field declaration list"
+        map global tree_parent <a-S> "<esc>: tree-select-parent-node struct_item<ret>" -docstring "struct item"
+        map global tree_parent <a-s> "<esc>: tree-select-parent-node struct_expression<ret>" -docstring "struct expression"
+        map global tree_parent e "<esc>: tree-select-parent-node enum_variant<ret>" -docstring "enum variant"
+        map global tree_parent E "<esc>: tree-select-parent-node enum_variant_list<ret>" -docstring "enum variant list"
+        map global tree_parent <a-E> "<esc>: tree-select-parent-node enum_item<ret>" -docstring "enum item"
+        map global tree_parent <a-e> "<esc>: tree-select-parent-node enum_expression<ret>" -docstring "enum expression"
+        map global tree_parent t "<esc>: tree-select-parent-node trait_item<ret>" -docstring "trait item"
+        map global tree_parent T "<esc>: tree-select-parent-node type_item<ret>" -docstring "type item"
+        map global tree_parent I "<esc>: tree-select-parent-node impl_item<ret>" -docstring "impl item"
+        map global tree_parent a "<esc>: tree-select-parent-node attribute_item<ret>" -docstring "attribute item"
+        map global tree_parent A "<esc>: tree-select-parent-node inner_attribute_item<ret>" -docstring "inner attribute item"
+        map global tree_parent g "<esc>: tree-select-parent-node generic_type<ret>" -docstring "generic_type"
+        map global tree_parent q "<esc>: tree-select-parent-node where_clause<ret>" -docstring "where clause"
+        map global tree_parent Q "<esc>: tree-select-parent-node where_predicate<ret>" -docstring "where predicate"
+        map global tree_parent i "<esc>: tree-select-parent-node if_expression<ret>" -docstring "if expression"
+        map global tree_parent w "<esc>: tree-select-parent-node while_expression<ret>" -docstring "while expression"
+        map global tree_parent r "<esc>: tree-select-parent-node for_expression<ret>" -docstring "for expression"
+        map global tree_parent o "<esc>: tree-select-parent-node loop_expression<ret>" -docstring "loop expression"
+        map global tree_parent m "<esc>: tree-select-parent-node match_arm<ret>" -docstring "match arm"
+        map global tree_parent <a-m> "<esc>: tree-select-parent-node match_pattern<ret>" -docstring "match pattern"
+        map global tree_parent M "<esc>: tree-select-parent-node match_block<ret>" -docstring "match block"
+        map global tree_parent <a-M> "<esc>: tree-select-parent-node match_expression<ret>" -docstring "match expression"
+        map global tree_parent u "<esc>: tree-select-parent-node use_declaration<ret>" -docstring "use declaration"
+        map global tree_parent U "<esc>: tree-select-parent-node use_list<ret>" -docstring "use list"
+        map global tree_parent h "<esc>: tree-select-parent-node mod_item<ret>" -docstring "mod item"
+        map global tree_parent l "<esc>: tree-select-parent-node let_declaration<ret>" -docstring "let declaration"
+        map global tree_parent v "<esc>: tree-select-parent-node macro_definition<ret>" -docstring "macro definition"
+        map global tree_parent V "<esc>: tree-select-parent-node macro_rule<ret>" -docstring "macro rule"
+        map global tree_parent x "<esc>: tree-select-parent-node line_comment<ret>" -docstring "line comment"
+
+        declare-user-mode tree_children
+        map global normal <a-'> ": enter-user-mode tree_children<ret>" -docstring "enter tree_children mode"
+        map global tree_children n "<esc>: tree-select-children<ret>" -docstring "children"
+        map global tree_children p "<esc>: tree-select-children parameter<ret>" -docstring "parameter"
+        map global tree_children s "<esc>: tree-select-children field_declaration<ret>" -docstring "field declaration"
+        map global tree_children e "<esc>: tree-select-children enum_variant<ret>" -docstring "enum variant"
+        map global tree_children a "<esc>: tree-select-children inner_attribute_item<ret>" -docstring "inner attribute item"
+        map global tree_children m "<esc>: tree-select-children match_arm<ret>" -docstring "match arm"
+        map global tree_children <a-m> "<esc>: tree-select-children match_pattern<ret>" -docstring "match pattern"
+        map global tree_children l "<esc>: tree-select-children let_declaration<ret>" -docstring "let declaration"
+        map global tree_children x "<esc>: tree-select-children line_comment<ret>" -docstring "line comment"
+    }
+}
+
+evaluate-commands %sh{
+    dark0="rgb:1e1e1e"
+    dark1="rgb:2e2e2e"
+    dark2="rgb:3e3e3e"
+    dark3="rgb:4e4e4e"
+    dark4="rgb:71768a"
+    dark5="rgb:81869a"
+
+    light0="rgb:aab7cf"
+    light1="rgb:d8dee9"
+    light2="rgb:e5e9f0"
+    light3="rgb:eceff4"
+
+    blue1="rgb:8fbcbb"
+    # blue2="rgb:88c0d0"
+    blue3="rgb:81a1c1"
+    blue4="rgb:5e81ac"
+
+    red="rgb:bf616a"
+    orange="rgb:d08770"
+    yellow="rgb:ebcb8b"
+    green="rgb:a3be8c"
+    purple="rgb:b48ead"
+
+    echo "
+        # code
+        face global value ${purple}
+        face global type ${light1}
+        face global variable ${light1}
+        face global module ${yellow}
+        face global function ${blue1}
+        face global string ${green}
+        face global keyword ${blue3}
+        face global operator ${light1}
+        face global attribute ${blue3}
+        face global comment ${dark4}+i
+        face global documentation ${dark5}
+        # face global meta ${blue1}
+        # face global meta ${yellow}
+        face global meta ${green}
+        face global builtin ${light1}+b
+
+        # markup
+        face global title ${blue1}+b
+        face global header ${yellow}+b
+        face global mono ${blue3}
+        face global block ${blue1}
+        face global link ${light1}+u
+        face global bullet ${light1}
+        face global list ${light1}
+
+        # builtin faces
+        face global Default ${light1},${dark0}
+        face global PrimarySelection default,${dark2}
+        face global SecondarySelection default,${dark1}
+        face global PrimaryCursor ${dark0},${light3}+fg
+        face global SecondaryCursor ${dark0},${light0}+fg
+        face global PrimaryCursorEol ${dark0},${blue3}+fg
+        face global SecondaryCursorEol ${dark0},${blue4}+fg
+        face global LineNumbers ${dark3}
+        face global LineNumberCursor ${dark5},${dark0}
+        face global LineNumberWrapped ${dark3}
+        face global MenuForeground ${dark2},${light1}
+        face global MenuBackground ${light1},${dark2}
+        face global MenuInfo ${dark5}
+        face global Information ${light1},${dark0}
+        face global Error ${dark0},${red}
+        face global StatusLine ${light1},${dark1}
+        face global StatusLineMode ${blue1}+b
+        face global StatusLineInfo ${blue3}
+        face global StatusLineValue ${green}
+        face global StatusCursor ${dark0},${light1}
+        face global Prompt ${yellow}
+        face global MatchingChar default+bu
+        face global BufferPadding ${dark2},${dark0}
+        face global Whitespace ${dark2}+f
+        face global WrapMarker ${light2}+b
+    "
+}
