@@ -59,9 +59,18 @@
       (keyboard-layout keyboard-layout)))
   (file-systems
     (cons* (file-system
+             (device (file-system-label "my-drive"))
              (mount-point "/")
-             (device
-               (uuid "8cea89ec-0940-494b-adbb-730eaf82ca13"
-                     'btrfs))
-             (type "btrfs"))
+             (type "btrfs")
+             (options "subvol=@"))
+           (file-system
+             (device (file-system-label "my-drive"))
+             (mount-point "/gnu/store")
+             (type "btrfs")
+             (options "subvol=@store"))
+           (file-system
+             (device (file-system-label "my-drive"))
+             (mount-point "/home")
+             (type "btrfs")
+             (options "subvol=@home"))
            %base-file-systems)))
