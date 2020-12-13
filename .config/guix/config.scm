@@ -14,14 +14,14 @@
         (list (channel
                 (name 'nonguix)
                 (url "https://gitlab.com/nonguix/nonguix")
-                (commit "f7b37f45a0684adbf02f217532debaa5defaeb08")
+                (commit "c79056e9bf2c7c57fcdc8e0cca488b87960c87a5"))
               (channel
                 (name 'guix)
                 (url "https://git.savannah.gnu.org/git/guix.git")
-                (commit "91bcb1d043b06d27ee891849fb6e19b0cfe98cb7"))))
+                (commit "f350df405fbcd5b9e27e6b6aa500da7f101f41e7"))))
         (inferior
           (inferior-for-channels channels)))
-       (first (lookup-inferior-packages inferior "linux" "5.9.12"))))
+       (first (lookup-inferior-packages inferior "linux" "5.9.14"))))
   (initrd microcode-initrd)
   (firmware (list linux-firmware))
   (locale "en_US.utf8")
