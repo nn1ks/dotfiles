@@ -5,7 +5,7 @@
   (gnu)
   (nongnu packages linux)
   (nongnu system linux-initrd))
-(use-service-modules desktop networking ssh virtualization xorg)
+(use-service-modules desktop networking pm ssh virtualization xorg)
 
 (operating-system
   (kernel
@@ -47,6 +47,7 @@
             (set-xorg-configuration
               (xorg-configuration
                 (keyboard-layout keyboard-layout)))
+            (service tlp-service-type)
             (service virtlog-service-type)
             (service libvirt-service-type
               (libvirt-configuration (unix-sock-group "libvirt"))))
