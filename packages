@@ -4,6 +4,7 @@ celluloid
 curl
 fd
 flatpak
+font-fira-code
 geary
 git
 git:send-email
