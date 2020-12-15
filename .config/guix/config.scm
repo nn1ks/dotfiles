@@ -65,11 +65,6 @@
              (options "subvol=@"))
            (file-system
              (device (file-system-label "my-drive"))
-             (mount-point "/gnu/store")
-             (type "btrfs")
-             (options "subvol=@store"))
-           (file-system
-             (device (file-system-label "my-drive"))
              (mount-point "/home")
              (type "btrfs")
              (options "subvol=@home"))
