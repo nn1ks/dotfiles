@@ -9,6 +9,7 @@ geary
 git
 git:send-email
 gnome-tweaks
+htop
 kakoune
 kitty
 openssh
