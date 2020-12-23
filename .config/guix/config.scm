@@ -47,6 +47,8 @@
             (set-xorg-configuration
               (xorg-configuration
                 (keyboard-layout keyboard-layout)))
+            (service zram-device-service-type
+              (zram-device-configuration (size "8G")))
             (service tlp-service-type)
             (service virtlog-service-type)
             (service libvirt-service-type
