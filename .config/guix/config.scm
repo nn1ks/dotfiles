@@ -56,8 +56,8 @@
       %desktop-services))
   (bootloader
     (bootloader-configuration
-      (bootloader grub-bootloader)
-      (target "/dev/sda")
+      (bootloader grub-efi-bootloader)
+      (target "/boot/efi")
       (keyboard-layout keyboard-layout)))
   (file-systems
     (cons* (file-system
