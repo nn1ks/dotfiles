@@ -1,27 +1,11 @@
 (use-modules
-  (guix channels)
-  (guix inferior)
-  (srfi srfi-1)
   (gnu)
   (nongnu packages linux)
   (nongnu system linux-initrd))
 (use-service-modules desktop networking pm ssh virtualization xorg)
 
 (operating-system
-  (kernel
-    (let*
-      ((channels
-        (list (channel
-                (name 'nonguix)
-                (url "https://gitlab.com/nonguix/nonguix")
-                (commit "c79056e9bf2c7c57fcdc8e0cca488b87960c87a5"))
-              (channel
-                (name 'guix)
-                (url "https://git.savannah.gnu.org/git/guix.git")
-                (commit "f350df405fbcd5b9e27e6b6aa500da7f101f41e7"))))
-        (inferior
-          (inferior-for-channels channels)))
-       (first (lookup-inferior-packages inferior "linux" "5.9.14"))))
+  (kernel linux)
   (initrd microcode-initrd)
   (firmware (list linux-firmware))
   (locale "en_US.utf8")
