@@ -54,6 +54,10 @@
       (keyboard-layout keyboard-layout)))
   (file-systems
     (cons* (file-system
+             (device (uuid "4F94-DE96" 'fat32))
+             (mount-point "/boot/efi")
+             (type "vfat"))
+           (file-system
              (device (file-system-label "my-drive"))
              (mount-point "/")
              (type "btrfs")
