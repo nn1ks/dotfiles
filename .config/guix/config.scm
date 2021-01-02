@@ -1,5 +1,6 @@
 (use-modules
   (gnu)
+  (gnu packages xorg)
   (nongnu packages linux)
   (nongnu system linux-initrd))
 (use-service-modules desktop linux networking pm ssh virtualization xorg)
@@ -30,6 +31,7 @@
       (list (service gnome-desktop-service-type)
             (set-xorg-configuration
               (xorg-configuration
+                (modules (delete xf86-input-synaptics %default-xorg-modules))
                 (keyboard-layout keyboard-layout)))
             (bluetooth-service #:auto-enable? #t)
             (service zram-device-service-type
