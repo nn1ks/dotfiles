@@ -1,6 +1,7 @@
 fn PROMPT
     let status_code = $?
-    echo -n "${c::bold}${c::blue}${PWD}${c::reset}"
+    let pwd = $(echo $PWD | sed "s;^$HOME;~;")
+    echo -n "${c::bold}${c::blue}${pwd}${c::reset}"
     if test $(git rev-parse --is-inside-work-tree) = true
         let branch = $(git branch --show-current)
         let status = ""
