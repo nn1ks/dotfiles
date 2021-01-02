@@ -31,6 +31,7 @@
             (set-xorg-configuration
               (xorg-configuration
                 (keyboard-layout keyboard-layout)))
+            (bluetooth-service #:auto-enable? #t)
             (service zram-device-service-type
               (zram-device-configuration (size "8G")))
             (service tlp-service-type)
