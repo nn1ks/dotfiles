@@ -2,7 +2,7 @@
   (gnu)
   (nongnu packages linux)
   (nongnu system linux-initrd))
-(use-service-modules desktop networking pm ssh virtualization xorg)
+(use-service-modules desktop linux networking pm ssh virtualization xorg)
 
 (operating-system
   (kernel linux)
