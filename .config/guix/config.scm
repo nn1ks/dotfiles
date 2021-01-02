@@ -37,6 +37,8 @@
             (service zram-device-service-type
               (zram-device-configuration (size "8G")))
             (service tlp-service-type)
+            (service openssh-service-type
+              (openssh-configuration))
             (service virtlog-service-type)
             (service libvirt-service-type
               (libvirt-configuration (unix-sock-group "libvirt"))))
