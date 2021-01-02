@@ -37,7 +37,16 @@
             (service virtlog-service-type)
             (service libvirt-service-type
               (libvirt-configuration (unix-sock-group "libvirt"))))
-      %desktop-services))
+      (modify-services %desktop-services
+        (guix-service-type config =>
+          (guix-configuration
+            (inherit config)
+            (substitute-urls
+              (append %default-substitute-urls
+                      (list "https://mirror.brielmaier.net")))
+            (authorized-keys
+              (append %default-authorized-guix-keys
+                      (list (local-file "/etc/guix/mirror.brielmaier.net.pub")))))))))
   (bootloader
     (bootloader-configuration
       (bootloader grub-efi-bootloader)
