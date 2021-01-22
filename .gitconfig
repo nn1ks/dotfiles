@@ -1,9 +1,9 @@
 [user]
     name = Niklas Sauter
-    email = niklas.sauter@gmx.de
+    email = niklas@n1ks.net
 [sendemail]
-    smptserver = mail.gmx.net
-    smptuser = niklas.sauter@gmx.de
+    smptserver = mail.n1ks.net
+    smptuser = niklas@n1ks.net
     smptencryption = tls
     smptserverport = 587
 [core]
