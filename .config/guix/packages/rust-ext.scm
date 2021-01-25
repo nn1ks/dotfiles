@@ -125,12 +125,12 @@
 (define-public rust-analyzer-bin
   (package
     (name "rust-analyzer-bin")
-    (version "2021-01-18")
+    (version "2021-01-25")
     (source (origin
               (method url-fetch)
               (uri (string-append "https://github.com/rust-analyzer/rust-analyzer/releases/download/"
                                   version "/rust-analyzer-linux"))
-              (sha256 (base32 "1j970fn9bbick39n6jjks3bcc7mchsy9wqn2z1wlndjhsz0kvk2l"))))
+              (sha256 (base32 "05kv9ipccqshqiw0gylgf0mbii2ra5pphk7b7s9g0b00jmkqv6vq"))))
     (build-system binary-build-system)
     (arguments
       `(#:patchelf-plan
