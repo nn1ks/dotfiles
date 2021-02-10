@@ -2,30 +2,47 @@
 
 celluloid
 curl
+evolution
 fd
 flatpak
 font-fira-code
+font-fira-mono
+font-iosevka
 geary
+gimp
 git
 git:send-email
 gnome-tweaks
 htop
+jq
+kak-lsp
 kakoune
 kitty
+libreoffice
 openssh
+parinfer-rust
+pwgen
+restic
 ripgrep
-rust
-rust:cargo
-rust-clippy
+rsync
+seahorse
+tig
+tokei
 translate-shell
 trash-cli
 tree
+unzip
 wget
+xmodmap
+xrandr
+xsel
+xz
 
 
 # Flatpak
 
-firefox
+bitwarden
 discord
 spotify
-bitwarden
+feeds
+fractal
