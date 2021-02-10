@@ -20,9 +20,15 @@ switch-to-workspace-up=['<Super>k']
 default-zoom-level='standard'
 
 [org/gnome/settings-daemon/plugins/media-keys]
+custom-keybindings=['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/']
 next=['<Super>adiaeresis']
 play=['<Super>udiaeresis']
 previous=['<Super>odiaeresis']
+
+[org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0]
+binding='Favorites'
+command='/home/niklas/.xmodmap.sh'
+name='Reload xmodmap'
 
 [org/gnome/shell]
 enabled-extensions=['drive-menu@gnome-shell-extensions.gcampax.github.com', 'clipboard-indicator@tudmotu.com', 'appindicatorsupport@rgcjonas.gmail.com']
