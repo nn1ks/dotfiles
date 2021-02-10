@@ -17,10 +17,6 @@ hook global InsertCompletionHide .* %{
     unmap window insert <s-tab> <c-p>
 }
 
-# Remap keybinding for user mode
-map global normal , <space>
-map global normal <space> ,
-
 # Keybindings for user mode
 map global user q ": quit<ret>" -docstring "quit"
 map global user w ": write<ret>" -docstring "write"
