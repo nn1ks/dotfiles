@@ -25,5 +25,5 @@ play=['<Super>udiaeresis']
 previous=['<Super>odiaeresis']
 
 [org/gnome/shell]
-enabled-extensions=['drive-menu@gnome-shell-extensions.gcampax.github.com']
+enabled-extensions=['drive-menu@gnome-shell-extensions.gcampax.github.com', 'clipboard-indicator@tudmotu.com', 'appindicatorsupport@rgcjonas.gmail.com']
 favorite-apps=['org.mozilla.firefox.desktop', 'org.gnome.Nautilus.desktop', 'kitty.desktop', 'org.gnome.Geary.desktop', 'com.spotify.Client.desktop']
