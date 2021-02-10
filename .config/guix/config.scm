@@ -1,5 +1,6 @@
 (use-modules
   (gnu)
+  (gnu packages gnome)
   (gnu packages xorg)
   (nongnu packages linux)
   (nongnu system linux-initrd))
@@ -42,6 +43,10 @@
             (service libvirt-service-type
               (libvirt-configuration (unix-sock-group "libvirt"))))
       (modify-services %desktop-services
+        (network-manager-service-type config =>
+          (network-manager-configuration
+            (inherit config)
+            (vpn-plugins (list network-manager-openvpn))))
         (guix-service-type config =>
           (guix-configuration
             (inherit config)
