@@ -101,6 +101,8 @@
         ("zlib" ,zlib)))
     (native-inputs
       `(("rust-src" ,rust-src)))
+    (propagated-inputs
+      `(("rust-analyzer-bin" ,rust-analyzer-bin)))
     (synopsis "The Rust programming language (binary package)")
     (description "Rust is a systems programming language that provides memory safety and thread safety guarantees.")
     (home-page "https://rust-lang.org")
