@@ -3,7 +3,7 @@
   (gnu packages xorg)
   (nongnu packages linux)
   (nongnu system linux-initrd))
-(use-service-modules desktop linux networking pm ssh virtualization xorg)
+(use-service-modules desktop linux networking pm virtualization xorg)
 
 (operating-system
   (kernel linux)
@@ -37,8 +37,6 @@
             (service zram-device-service-type
               (zram-device-configuration (size "8G")))
             (service tlp-service-type)
-            (service openssh-service-type
-              (openssh-configuration))
             (service virtlog-service-type)
             (service libvirt-service-type
               (libvirt-configuration (unix-sock-group "libvirt"))))
