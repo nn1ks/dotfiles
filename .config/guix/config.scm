@@ -33,7 +33,8 @@
               (xorg-configuration
                 (modules (delete xf86-input-synaptics %default-xorg-modules))
                 (keyboard-layout keyboard-layout)))
-            (bluetooth-service #:auto-enable? #t)
+            (service bluetooth-service-type
+              (bluetooth-configuration (auto-enable? #t)))
             (service zram-device-service-type
               (zram-device-configuration (size "8G")))
             (service tlp-service-type)
