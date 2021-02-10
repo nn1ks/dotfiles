@@ -2,6 +2,10 @@
 add-highlighter global/ number-lines -relative -hlcursor
 add-highlighter global/ show-matching
 set-option global ui_options ncurses_assistant=none
+set-face global comment cyan+i
+set-face global MenuBackground black,white
+set-face global MenuForeground black,blue
+set-face global MatchingChar default+bu
 
 # Completion with tab
 hook global InsertCompletionShow .* %{
