@@ -26,4 +26,4 @@ previous=['<Super>odiaeresis']
 
 [org/gnome/shell]
 enabled-extensions=['drive-menu@gnome-shell-extensions.gcampax.github.com']
-favorite-apps=['org.mozilla.firefox.desktop', 'org.gnome.Nautilus.desktop', 'kitty.desktop', 'org.gnome.Geary.desktop', 'com.discordapp.Discord.desktop', 'com.spotify.Client.desktop']
+favorite-apps=['org.mozilla.firefox.desktop', 'org.gnome.Nautilus.desktop', 'kitty.desktop', 'org.gnome.Geary.desktop', 'com.spotify.Client.desktop']
