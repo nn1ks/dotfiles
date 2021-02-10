@@ -12,6 +12,8 @@ geary
 gimp
 git
 git:send-email
+gnome-shell-extension-clipboard-indicator
+gnome-shell-extension-appindicator
 gnome-tweaks
 htop
 jq
