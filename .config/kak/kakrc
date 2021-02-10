@@ -72,14 +72,7 @@ map global insert <c-n> "<a-;>: insert-c-n<ret>"
 
 # Plugins
 require-module plug
-plug plug https://github.com/alexherbo2/plug.kak %{
-    define-command plug-upgrade -docstring 'plug-upgrade' %{
-        plug-install
-        plug-execute lsp cargo install --locked --force --path .
-        plug-execute tree git submodule update --init --recursive
-        plug-execute tree cargo install --locked --force --path . --features "rust bash json css html"
-    }
-}
+plug plug https://github.com/alexherbo2/plug.kak
 
 plug smarttab https://github.com/andreyorst/smarttab.kak %{
     set-option global tabstop 4
