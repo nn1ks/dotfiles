@@ -70,6 +70,11 @@ def -hidden insert-c-n %{
 }
 map global insert <c-n> "<a-;>: insert-c-n<ret>"
 
+# Fix comment character for scheme files
+hook global WinSetOption filetype=scheme %{
+    set-option window comment_line ';;'
+}
+
 # Plugins
 require-module plug
 plug plug https://github.com/alexherbo2/plug.kak
