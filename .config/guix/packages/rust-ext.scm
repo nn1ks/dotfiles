@@ -91,6 +91,8 @@
                 (copy-recursively "rustfmt-preview/share" (string-append out "/share"))
                 (install-file "rustfmt-preview/bin/rustfmt" (string-append out "/bin"))
                 (install-file "rustfmt-preview/bin/cargo-fmt" (string-append out "/bin"))
+                ;; rust-docs
+                (copy-recursively "rust-docs/share" (string-append out "/share"))
                 ;; rust-src
                 (copy-recursively (string-append (assoc-ref inputs "rust-src") "/lib") (string-append out "/lib"))))))))
     (inputs
