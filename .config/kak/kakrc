@@ -162,13 +162,13 @@ plug-old lsp https://github.com/kak-lsp/kak-lsp %{
         # }
 
         declare-option bool inlay_diagnostics_enabled false
-        define-command toggle-inlay-diagnostics -params 1 %{ evaluate-commands %sh{
+        define-command toggle-inlay-diagnostics %{ evaluate-commands %sh{
             if [ "$kak_opt_inlay_diagnostics_enabled" = "true" ]; then
-                printf "%s\n" "lsp-inlay-diagnostics-disable $1
-                               set-option $1 inlay_diagnostics_enabled false"
+                printf "%s\n" "lsp-inlay-diagnostics-disable window
+                               set-option window inlay_diagnostics_enabled false"
             else
-                printf "%s\n" "lsp-inlay-diagnostics-enable $1
-                               set-option $1 inlay_diagnostics_enabled true"
+                printf "%s\n" "lsp-inlay-diagnostics-enable window
+                               set-option window inlay_diagnostics_enabled true"
             fi
         }}
 
@@ -177,7 +177,7 @@ plug-old lsp https://github.com/kak-lsp/kak-lsp %{
         map global user h ": lsp-hover<ret>" -docstring "hover info"
         map global user H ": lsp-signature-help<ret>" -docstring "signature help"
         map global user f ": lsp-formatting<ret>" -docstring "format document"
-        map global user i ": toggle-inlay-diagnostics global<ret>" -docstring "toggle inlay diagnostics"
+        map global user i ": toggle-inlay-diagnostics<ret>" -docstring "toggle inlay diagnostics"
         map global goto d "<esc>: lsp-definition<ret>" -docstring "definition"
         map global goto y "<esc>: lsp-type-definition<ret>" -docstring "type definition"
         map global goto m "<esc>: lsp-goto-next-match<ret>" -docstring "next reference"
