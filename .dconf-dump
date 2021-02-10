@@ -12,6 +12,7 @@ show-battery-percentage=true
 tap-to-click=true
 
 [org/gnome/desktop/wm/keybindings]
+close=['<Super>w']
 switch-to-workspace-down=['<Super>j']
 switch-to-workspace-up=['<Super>k']
 
