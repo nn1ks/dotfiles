@@ -19,5 +19,6 @@
     a = add
     c = commit
     d = diff
-    l = log --oneline --graph
+    l = log
+    g = log --all --graph --decorate --oneline
     s = status
