@@ -29,8 +29,8 @@ map global goto b "<esc>: buffer-next<ret>" -docstring "next buffer"
 map global goto B "<esc>: buffer-previous<ret>" -docstring "previous buffer"
 
 # Copy/paste from clipboard
-map global user y "<a-|>wl-copy<ret>" -docstring "yank to clipboard"
-map global user p "<a-!>wl-paste<ret>" -docstring "paste from clipboard after selection"
+map global user y "<a-|>xsel --input --clipboard<ret>" -docstring "yank to clipboard"
+map global user p "<a-!>xsel --output --clipboard<ret>" -docstring "paste from clipboard after selection"
 map global user P "!xsel --output --clipboard<ret>" -docstring "paste from clipboard before selection"
 
 # Goto git hunk
