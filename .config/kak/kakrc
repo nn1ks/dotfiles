@@ -92,26 +92,6 @@ plug search-highlighter https://github.com/alexherbo2/search-highlighter.kak %{
     set-face global Search black,yellow
 }
 
-plug filetree projects/filetree.kak %{
-    hook global WinSetOption filetype=filetree %{
-        # set-option buffer modelinefmt ""
-        remove-highlighter buffer/number-lines_-relative_-hlcursor # FIXME
-    }
-    map global user t ": filetree-toggle<ret>" -docstring "toggle filetree"
-    map global user T ": filetree-focus<ret>" -docstring "focus filetree"
-    map global user <a-t> ": filetree-refresh<ret>" -docstring "refresh filetree"
-}
-
-# plug kaktree https://github.com/andreyorst/kaktree %{
-#     hook global WinSetOption filetype=kaktree %{
-#         set-option buffer modelinefmt ""
-#         remove-highlighter buffer/number-lines_-relative_-hlcursor # FIXME
-#     }
-#     kaktree-enable
-#     map global user t ": kaktree-toggle<ret>" -docstring "toggle filetree"
-#     map global user T ": kaktree-focus<ret>" -docstring "focus filetree"
-# }
-
 plug fzf https://github.com/andreyorst/fzf.kak %{
     map global user o ": fzf-mode<ret>f" -docstring "open file with fzf"
     map global user O ": fzf-mode<ret>g" -docstring "open file contents with fzf"
