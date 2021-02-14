@@ -16,6 +16,7 @@
         (method url-fetch)
         (uri (string-append "https://static.rust-lang.org/dist/2021-02-11/rust-"
                             version "-x86_64-unknown-linux-gnu.tar.gz"))
+        (file-name (string-append name "-" version ".tar.gz"))
         (sha256 (base32 "00bpfr4km7rmzvjadp3g9h8b5p2qx3jglax4vsiax049j59rp27s"))))
     (supported-systems '("x86_64-linux"))
     (build-system binary-build-system)
@@ -107,6 +108,7 @@
         (method url-fetch)
         (uri (string-append "https://static.rust-lang.org/dist/2021-02-11/rust-src-"
                             version ".tar.gz"))
+        (file-name (string-append name "-" version ".tar.gz"))
         (sha256 (base32 "171a0466xp57cni0vszkqqhaa5x13rpfn0m8kaj1jvv5i07193k7"))))
     (build-system binary-build-system)
     (arguments
@@ -126,6 +128,7 @@
         (method url-fetch)
         (uri (string-append "https://github.com/rust-analyzer/rust-analyzer/releases/download/"
                             version "/rust-analyzer-linux.gz"))
+        (file-name (string-append name "-" version ".tar.gz"))
         (sha256 (base32 "0hffc4yvw1z1ldqkafx4xjfrsy5zhsflrhzigawmqi78baiqf654"))))
     (build-system binary-build-system)
     (arguments

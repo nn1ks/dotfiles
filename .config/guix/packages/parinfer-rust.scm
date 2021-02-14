@@ -17,6 +17,7 @@
         (method url-fetch)
         (uri (string-append "https://github.com/eraserhd/parinfer-rust/archive/v"
                             version ".tar.gz"))
+        (file-name (string-append name "-" version ".tar.gz"))
         (sha256 (base32 "00fjyapvyi95g65iml0skppza0s1pigl3qvbkg319hy0m3mdhbvm"))
         (patches
           (search-patches "patches/parinfer-rust-new-emacs-version.patch"))))
