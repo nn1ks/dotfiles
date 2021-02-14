@@ -49,7 +49,6 @@
         (method url-fetch)
         (uri (crate-uri "emacs" version))
         (file-name (string-append name "-" version ".tar.gz"))
-        ;; (sha256 (base32 "18yppxl65y5xrv6qp3gf65ipbjdp6vlhi5g5fsn5glqxix7275sk"))
         (sha256 (base32 "1badqz4skmk6mq10mrsknxy22fbh71my1swrray4wzzfzf3y1bf6"))))
     (build-system cargo-build-system)
     (arguments
