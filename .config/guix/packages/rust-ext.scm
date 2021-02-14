@@ -11,30 +11,32 @@
 (define-public rust-bin
   (package
     (name "rust-bin")
-    (version "1.49.0")
+    (version "1.50.0")
     (source
       (origin
         (method url-fetch)
-        (uri (string-append "https://static.rust-lang.org/dist/2020-12-31/rust-"
+        (uri (string-append "https://static.rust-lang.org/dist/2021-02-11/rust-"
                             version "-x86_64-unknown-linux-gnu.tar.gz"))
-        (sha256 (base32 "1099x7ip1vw8jbwblqhwca8zy2wfy69fv3zmkkb0fdrgz1nl854b"))))
+        (sha256 (base32 "00bpfr4km7rmzvjadp3g9h8b5p2qx3jglax4vsiax049j59rp27s"))))
     (supported-systems '("x86_64-linux"))
     (build-system binary-build-system)
     (arguments
      `(#:patchelf-plan
-       `(("rustc/lib/libLLVM-11-rust-1.49.0-stable.so"
+       `(("rustc/lib/libLLVM-11-rust-1.50.0-stable.so"
           ("glibc" "gcc:lib" "zlib"))
-         ("rustc/lib/libstd-e12de7683a34c500.so"
+         ("rustc/lib/libstd-6f77337c1826707d.so"
           ("glibc" "gcc:lib"))
-         ("rustc/lib/librustc_driver-74849affecce5bb0.so"
+         ("rustc/lib/librustc_driver-02bb148e88292f22.so"
           ("glibc" "gcc:lib" "out"))
-         ("rustc/lib/libchalk_derive-8cbf2a95fc944986.so"
+         ("rustc/lib/libchalk_derive-61359e51e4358720.so"
           ("glibc" "gcc:lib"))
-         ("rustc/lib/librustc_macros-6003eb18afe8b8c1.so"
+         ("rustc/lib/librustc_macros-4fdb095435d7e9cb.so"
           ("glibc" "gcc:lib"))
-         ("rustc/lib/libtest-6609e81d71a1bf05.so"
+         ("rustc/lib/libtest-e47ef95451387c6a.so"
           ("gcc:lib" "out"))
-         ("rustc/lib/libtracing_attributes-916696aac246fd21.so"
+         ("rustc/lib/libtracing_attributes-36f34216659db5d4.so"
+          ("glibc" "gcc:lib"))
+         ("rustc/lib/libserde_derive-ebf4f007defb9256.so"
           ("glibc" "gcc:lib"))
          ("rustc/bin/rustc"
           ("glibc" "out"))
@@ -42,9 +44,9 @@
           ("gcc:lib" "out"))
          ("rustc/lib/rustlib/x86_64-unknown-linux-gnu/bin/rust-lld"
           ("glibc" "gcc:lib" "out"))
-         ("rust-std-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libstd-e12de7683a34c500.so"
+         ("rust-std-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libstd-6f77337c1826707d.so"
           ("glibc" "gcc:lib"))
-         ("rust-std-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-6609e81d71a1bf05.so"
+         ("rust-std-x86_64-unknown-linux-gnu/lib/rustlib/x86_64-unknown-linux-gnu/lib/libtest-e47ef95451387c6a.so"
           ("gcc:lib" "out"))
          ("cargo/bin/cargo"
           ("glibc" "gcc:lib"))
@@ -62,40 +64,28 @@
            (lambda* (#:key inputs outputs #:allow-other-keys)
              (let ((out (assoc-ref outputs "out")))
                ;; rustc
-               ;;(copy-recursively "rustc/lib" (string-append out "/lib"))
-               (install-file "rustc/lib/libLLVM-11-rust-1.49.0-stable.so" (string-append out "/lib"))
-               (install-file "rustc/lib/libstd-e12de7683a34c500.so" (string-append out "/lib"))
-               (install-file "rustc/lib/librustc_driver-74849affecce5bb0.so" (string-append out "/lib"))
-               (install-file "rustc/lib/libchalk_derive-8cbf2a95fc944986.so" (string-append out "/lib"))
-               (install-file "rustc/lib/librustc_macros-6003eb18afe8b8c1.so" (string-append out "/lib"))
-               (install-file "rustc/lib/libtest-6609e81d71a1bf05.so" (string-append out "/lib"))
-               (install-file "rustc/lib/libtracing_attributes-916696aac246fd21.so" (string-append out "/lib"))
-               (copy-recursively "rustc/lib/rustlib/etc" (string-append out "/lib/rustlib/etc"))
-               ;;(copy-recursively "rustc/lib/rustlib/x86_64-unknown-linux-gnu" (string-append out "/lib/rustlib/x86_64-unknown-linux-gnu"))
+               (delete-file "rustc/lib/rustlib/x86_64-unknown-linux-gnu/bin/rust-lld")
+               (delete-file "rustc/lib/rustlib/x86_64-unknown-linux-gnu/bin/rust-llvm-dwp")
+               (copy-recursively "rustc/lib" (string-append out "/lib"))
                (copy-recursively "rustc/share" (string-append out "/share"))
-               (install-file "rustc/bin/rustc" (string-append out "/bin"))
-               (install-file "rustc/bin/rustdoc" (string-append out "/bin"))
-               (install-file "rustc/bin/rust-gdb" (string-append out "/bin"))
-               (install-file "rustc/bin/rust-gdbgui" (string-append out "/bin"))
-               (install-file "rustc/bin/rust-lldb" (string-append out "/bin"))
+               (copy-recursively "rustc/bin" (string-append out "/bin"))
                ;; std
                (copy-recursively "rust-std-x86_64-unknown-linux-gnu/lib" (string-append out "/lib"))
                ;; cargo
                (copy-recursively "cargo/etc" (string-append out "/etc"))
                (copy-recursively "cargo/share" (string-append out "/share"))
-               (install-file "cargo/bin/cargo" (string-append out "/bin"))
+               (copy-recursively "cargo/bin" (string-append out "/bin"))
                ;; clippy
                (copy-recursively "clippy-preview/share" (string-append out "/share"))
-               (install-file "clippy-preview/bin/clippy-driver" (string-append out "/bin"))
-               (install-file "clippy-preview/bin/cargo-clippy" (string-append out "/bin"))
+               (copy-recursively "clippy-preview/bin" (string-append out "/bin"))
                ;; rustfmt
                (copy-recursively "rustfmt-preview/share" (string-append out "/share"))
-               (install-file "rustfmt-preview/bin/rustfmt" (string-append out "/bin"))
-               (install-file "rustfmt-preview/bin/cargo-fmt" (string-append out "/bin"))
+               (copy-recursively "rustfmt-preview/bin" (string-append out "/bin"))
                ;; rust-docs
                (copy-recursively "rust-docs/share" (string-append out "/share"))
                ;; rust-src
-               (copy-recursively (string-append (assoc-ref inputs "rust-src") "/lib") (string-append out "/lib"))))))))
+               (copy-recursively (string-append (assoc-ref inputs "rust-src") "/lib")
+                                 (string-append out "/lib"))))))))
     (inputs
      `(("glibc" ,glibc)
        ("gcc:lib" ,gcc "lib")
@@ -112,13 +102,13 @@
 (define-public rust-src
   (package
     (name "rust-src")
-    (version "1.49.0")
+    (version "1.50.0")
     (source
       (origin
         (method url-fetch)
-        (uri (string-append "https://static.rust-lang.org/dist/2020-12-31/rust-src-"
+        (uri (string-append "https://static.rust-lang.org/dist/2021-02-11/rust-src-"
                             version ".tar.gz"))
-        (sha256 (base32 "13kgaswywpxjq4c3lcv5nag5k9q2sz77673hzawhwwnsq780yjj7"))))
+        (sha256 (base32 "171a0466xp57cni0vszkqqhaa5x13rpfn0m8kaj1jvv5i07193k7"))))
     (build-system binary-build-system)
     (arguments
      `(#:install-plan
