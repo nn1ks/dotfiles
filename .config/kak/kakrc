@@ -1,11 +1,20 @@
 # Appearance
 add-highlighter global/ number-lines -relative -hlcursor
 add-highlighter global/ show-matching
+# add-highlighter global/ column "%opt{autowrap_column}" default,rgb:3c3836
 set-option global ui_options ncurses_assistant=none
-set-face global comment cyan+i
-set-face global MenuBackground black,white
-set-face global MenuForeground black,blue
-set-face global MatchingChar default+bu
+colorscheme gruvbox
+
+# Indentation
+set-option global tabstop 4
+set-option global aligntab false
+set-option global indentwidth 4
+hook global InsertChar \t %{ try %{
+    execute-keys -draft "h<a-h><a-k>\A\h+\z<ret><a-;>;%opt{indentwidth}@"
+}}
+hook global InsertDelete ' ' %{ try %{
+    execute-keys -draft 'h<a-h><a-k>\A\h+\z<ret>i<space><esc><lt>'
+}}
 
 # Completion with tab
 hook global InsertCompletionShow .* %{
@@ -49,26 +58,16 @@ hook global WinCreate .* %{ evaluate-commands %sh{
             hook global InsertIdle %val{buffile} %{git update-diff}"
 }}
 
-# Find and edit file
+# Find command
 define-command find -params 1 -shell-script-candidates %{ fd --type f --hidden } %{ edit %arg{1} } \
-    -docstring "find and edit a file"
-map global user g ":find " -docstring "find and edit a file"
+    -docstring "find <filename>: recursively search and edit a file"
+alias global f find
+map global user f ":find " -docstring "find and edit a file"
 
-# Find and edit file in git repository
-define-command git-find -params 1 -shell-script-candidates %{ git ls-files } %{ edit %arg{1} } \
-    -docstring "find and edit a git file"
-map global user G ":git-find " -docstring "find and edit a git file"
-
-# Map <c-n> to select next snippet placeholder
-def -hidden insert-c-n %{
-    try %{
-        lsp-snippets-select-next-placeholders
-        exec '<a-;>d'
-    } catch %{
-        exec -with-hooks '<c-n>'
-    }
-}
-map global insert <c-n> "<a-;>: insert-c-n<ret>"
+# Grep command
+set-option global grepcmd "rg --vimgrep --follow"
+alias global g grep
+map global user g ":grep " -docstring "search for given regex recursively"
 
 # Fix comment character for scheme files
 hook global WinSetOption filetype=scheme %{
@@ -79,30 +78,20 @@ hook global WinSetOption filetype=scheme %{
 require-module plug
 plug plug https://github.com/alexherbo2/plug.kak
 
-plug smarttab https://github.com/andreyorst/smarttab.kak %{
-    set-option global tabstop 4
-    set-option global softtabstop 4
-    hook global WinSetOption .* expandtab
+plug prelude https://github.com/alexherbo2/prelude.kak %{
+    plug auto-pairs https://github.com/alexherbo2/auto-pairs.kak
+    # plug connect https://github.com/alexherbo2/connect.kak %{
+    #     alias global popup terminal
+    #     require-module connect-fzy
+    #     map global user f ": fzy-files<ret>" -docstring "open file with fzy"
+    #     map global user g ": fzy-grep<ret>" -docstring "grep file contents with fzy"
+    #     map global user b ": fzy-buffer<ret>" -docstring "open buffer with fzy"
+    # }
 }
-
-plug prelude https://github.com/alexherbo2/prelude.kak
-plug auto-pairs https://github.com/alexherbo2/auto-pairs.kak
 
 plug search-highlighter https://github.com/alexherbo2/search-highlighter.kak %{
-    set-face global Search black,yellow
-}
-
-plug fzf https://github.com/andreyorst/fzf.kak %{
-    map global user o ": fzf-mode<ret>f" -docstring "open file with fzf"
-    map global user O ": fzf-mode<ret>g" -docstring "open file contents with fzf"
-    map global user b ": fzf-mode<ret>b" -docstring "open buffer with fzf"
-    map global user B ": fzf-mode<ret><a-b>" -docstring "delete buffer with fzf"
-    map global user g ": fzf-mode<ret>s" -docstring "search in buffer with fzf"
-    map global user j ": fzf-mode<ret>c" -docstring "change directory with fzf"
-    set-option global fzf_default_opts "--layout reverse --info inline --color 16,hl:12,hl+:12,bg+:8,fg+:15,gutter:0,pointer:15,border:8"
-    set-option global fzf_file_command "fd"
-    set-option global fzf_grep_command "rg"
-    set-option global fzf_cd_command "fd --type d"
+    set-face global Search black,yellow+f
+    search-highlighter-enable
 }
 
 plug parinfer https://github.com/eraserhd/parinfer-rust %{
@@ -116,11 +105,8 @@ plug-old lsp https://github.com/kak-lsp/kak-lsp %{
     hook global WinSetOption filetype=(rust) %{
         lsp-enable-window
 
-        # set-option global lsp_server_configuration rust.clippy_preference="on"
-        # set-option global lsp_server_configuration rust-analyzer.checkOnSave.command="clippy"
-
-        # hook global BufWritePre .* lsp-formatting-sync
-        # set-option global lsp_auto_highlight_references true
+        hook global BufWritePre .* lsp-formatting
+        set-option global lsp_auto_highlight_references true
         set-option global lsp_diagnostic_line_error_sign "!"
         set-option global lsp_diagnostic_line_warning_sign "?"
         set-face global DiagnosticError red+u
@@ -134,30 +120,13 @@ plug-old lsp https://github.com/kak-lsp/kak-lsp %{
         hook -once -always window WinSetOption filetype=.* %{
             remove-hooks window semantic-tokens
         }
-        # hook window -group rust-inlay-hints BufReload .* rust-analyzer-inlay-hints
-        # hook window -group rust-inlay-hints NormalIdle .* rust-analyzer-inlay-hints
-        # hook window -group rust-inlay-hints InsertIdle .* rust-analyzer-inlay-hints
-        # hook -once -always window WinSetOption filetype=.* %{
-        #     remove-hooks window rust-inlay-hints
-        # }
-
-        declare-option bool inlay_diagnostics_enabled false
-        define-command toggle-inlay-diagnostics %{ evaluate-commands %sh{
-            if [ "$kak_opt_inlay_diagnostics_enabled" = "true" ]; then
-                printf "%s\n" "lsp-inlay-diagnostics-disable window
-                               set-option window inlay_diagnostics_enabled false"
-            else
-                printf "%s\n" "lsp-inlay-diagnostics-enable window
-                               set-option window inlay_diagnostics_enabled true"
-            fi
-        }}
+        lsp-inlay-diagnostics-enable window
 
         map global user r ": lsp-rename-prompt<ret>" -docstring "rename symbol"
         map global user a ": lsp-code-actions<ret>" -docstring "code actions"
         map global user h ": lsp-hover<ret>" -docstring "hover info"
         map global user H ": lsp-signature-help<ret>" -docstring "signature help"
-        map global user f ": lsp-formatting<ret>" -docstring "format document"
-        map global user i ": toggle-inlay-diagnostics<ret>" -docstring "toggle inlay diagnostics"
+        map global user t ": lsp-formatting<ret>" -docstring "format document"
         map global goto d "<esc>: lsp-definition<ret>" -docstring "definition"
         map global goto y "<esc>: lsp-type-definition<ret>" -docstring "type definition"
         map global goto m "<esc>: lsp-goto-next-match<ret>" -docstring "next reference"
@@ -169,5 +138,25 @@ plug-old lsp https://github.com/kak-lsp/kak-lsp %{
         map global goto i "<esc>: lsp-implementation<ret>" -docstring "implementation"
         map global goto n "<esc>: lsp-diagnostics<ret>" -docstring "diagnostics"
         map global goto r "<esc>: lsp-references<ret>" -docstring "references"
+
+        # Map <c-n> to select next snippet placeholder
+        define-command -hidden insert-c-n %{
+            try %{
+                lsp-snippets-select-next-placeholders
+                execute-keys '<a-;>d'
+            } catch %{
+                execute-keys -with-hooks '<c-n>'
+            }
+        }
+        map global insert <c-n> "<a-;>: insert-c-n<ret>"
+
+        # Rust-specific
+        hook window -group rust-inlay-hints BufReload .* rust-analyzer-inlay-hints
+        hook window -group rust-inlay-hints NormalIdle .* rust-analyzer-inlay-hints
+        hook window -group rust-inlay-hints InsertIdle .* rust-analyzer-inlay-hints
+        hook -once -always window WinSetOption filetype=.* %{
+            remove-hooks window rust-inlay-hints
+        }
+        set-option global lsp_server_configuration rust.clippy_preference="on"
     }
 }
