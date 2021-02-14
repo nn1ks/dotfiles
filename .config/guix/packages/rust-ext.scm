@@ -126,8 +126,8 @@
       (origin
         (method url-fetch)
         (uri (string-append "https://github.com/rust-analyzer/rust-analyzer/releases/download/"
-                            version "/rust-analyzer-linux"))
-        (sha256 (base32 "08c3x6hgnxhxwrjxagj0gy8z2rhdl01n27hl4wlfiwhqljayjjpy"))))
+                            version "/rust-analyzer-linux.gz"))
+        (sha256 (base32 "0hffc4yvw1z1ldqkafx4xjfrsy5zhsflrhzigawmqi78baiqf654"))))
     (build-system binary-build-system)
     (arguments
      `(#:patchelf-plan
@@ -139,7 +139,7 @@
        (modify-phases %standard-phases
          (replace 'unpack
            (lambda* (#:key source #:allow-other-keys)
-             (copy-file source "rust-analyzer")
+             (invoke "sh" "-c" (string-append "gunzip -cf '" source "' > rust-analyzer"))
              (chmod "rust-analyzer" #o755))))))
     (inputs
      `(("glibc" ,glibc)
