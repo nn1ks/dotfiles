@@ -51,11 +51,11 @@
           (guix-configuration
             (inherit config)
             (substitute-urls
-              (append %default-substitute-urls
-                      (list "https://mirror.brielmaier.net")))
+              (append (list "https://mirror.brielmaier.net")
+                      %default-substitute-urls))
             (authorized-keys
-              (append %default-authorized-guix-keys
-                      (list (local-file "/etc/guix/mirror.brielmaier.net.pub")))))))))
+              (append (list (local-file "mirror.brielmaier.net.pub"))
+                      %default-authorized-guix-keys)))))))
   (bootloader
     (bootloader-configuration
       (bootloader grub-efi-bootloader)
