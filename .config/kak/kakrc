@@ -80,13 +80,6 @@ plug plug https://github.com/alexherbo2/plug.kak
 
 plug prelude https://github.com/alexherbo2/prelude.kak %{
     plug auto-pairs https://github.com/alexherbo2/auto-pairs.kak
-    # plug connect https://github.com/alexherbo2/connect.kak %{
-    #     alias global popup terminal
-    #     require-module connect-fzy
-    #     map global user f ": fzy-files<ret>" -docstring "open file with fzy"
-    #     map global user g ": fzy-grep<ret>" -docstring "grep file contents with fzy"
-    #     map global user b ": fzy-buffer<ret>" -docstring "open buffer with fzy"
-    # }
 }
 
 plug search-highlighter https://github.com/alexherbo2/search-highlighter.kak %{
