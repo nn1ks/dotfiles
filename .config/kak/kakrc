@@ -79,8 +79,9 @@ hook global WinSetOption filetype=scheme %{
 require-module plug
 plug plug https://github.com/alexherbo2/plug.kak
 
-plug prelude https://github.com/alexherbo2/prelude.kak %{
-    plug auto-pairs https://github.com/alexherbo2/auto-pairs.kak
+plug prelude https://github.com/alexherbo2/prelude.kak
+plug auto-pairs https://github.com/alexherbo2/auto-pairs.kak %{
+    auto-pairs-enable
 }
 
 plug search-highlighter https://github.com/alexherbo2/search-highlighter.kak %{
