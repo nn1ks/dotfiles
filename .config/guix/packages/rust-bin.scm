@@ -5,7 +5,8 @@
   #:use-module (guix packages)
   #:use-module (guix download)
   #:use-module ((guix licenses) #:prefix license:)
-  #:use-module (nonguix build-system binary))
+  #:use-module (nonguix build-system binary)
+  #:use-module (rust-ext))
 
 (define-public rust-bin
   (package
@@ -97,56 +98,4 @@
     (synopsis "The Rust programming language (binary package)")
     (description "Rust is a systems programming language that provides memory safety and thread safety guarantees.")
     (home-page "https://rust-lang.org")
-    (license (list license:asl2.0 license:expat))))
-
-(define-public rust-src
-  (package
-    (name "rust-src")
-    (version "1.50.0")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (string-append "https://static.rust-lang.org/dist/2021-02-11/rust-src-"
-                            version ".tar.gz"))
-        (file-name (string-append name "-" version ".tar.gz"))
-        (sha256 (base32 "171a0466xp57cni0vszkqqhaa5x13rpfn0m8kaj1jvv5i07193k7"))))
-    (build-system binary-build-system)
-    (arguments
-     `(#:install-plan
-       `(("rust-src/lib" "./"))))
-    (synopsis "Source for the Rust programming language")
-    (description "Rust is a systems programming language that provides memory safety and thread safety guarantees.")
-    (home-page "https://rust-lang.org")
-    (license (list license:asl2.0 license:expat))))
-
-(define-public rust-analyzer-bin
-  (package
-    (name "rust-analyzer-bin")
-    (version "2021-02-08")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (string-append "https://github.com/rust-analyzer/rust-analyzer/releases/download/"
-                            version "/rust-analyzer-linux.gz"))
-        (file-name (string-append name "-" version ".tar.gz"))
-        (sha256 (base32 "0hffc4yvw1z1ldqkafx4xjfrsy5zhsflrhzigawmqi78baiqf654"))))
-    (build-system binary-build-system)
-    (arguments
-     `(#:patchelf-plan
-       `(("rust-analyzer"
-          ("glibc" "gcc:lib")))
-       #:install-plan
-       `(("rust-analyzer" "bin/"))
-       #:phases
-       (modify-phases %standard-phases
-         (replace 'unpack
-           (lambda* (#:key source #:allow-other-keys)
-             (invoke "sh" "-c" (string-append "gunzip -cf '" source "' > rust-analyzer"))
-             (chmod "rust-analyzer" #o755))))))
-    (inputs
-     `(("glibc" ,glibc)
-       ("gcc:lib" ,gcc "lib")))
-    (synopsis "An experimental Rust compiler front-end for IDEs (binary package)")
-    (description "Rust-analyzer is an experimental modular compiler frontend for the Rust language.")
-    (home-page "https://rust-analyzer.github.io")
     (license (list license:asl2.0 license:expat))))
