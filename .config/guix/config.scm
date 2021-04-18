@@ -37,7 +37,7 @@
             (service bluetooth-service-type
               (bluetooth-configuration (auto-enable? #t)))
             (service zram-device-service-type
-              (zram-device-configuration (size "8G")))
+              (zram-device-configuration (size "24G")))
             (service tlp-service-type)
             (service virtlog-service-type)
             (service libvirt-service-type
