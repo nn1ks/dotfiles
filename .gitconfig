@@ -2,11 +2,6 @@
     name = Niklas Sauter
     email = niklas@n1ks.net
     signingkey = F4047D8CF4CCCBD7F04CAC4446D2BA9AB7079F73
-[sendemail]
-    smptserver = mail.n1ks.net
-    smptuser = niklas@n1ks.net
-    smptencryption = tls
-    smptserverport = 587
 [core]
     ignorecase = false
     pager = less -F -X
