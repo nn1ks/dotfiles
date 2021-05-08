@@ -73,6 +73,7 @@ map global user g ":grep " -docstring "search for given regex recursively"
 # Fix comment character for scheme files
 hook global WinSetOption filetype=scheme %{
     set-option window comment_line ';;'
+    set-option window indentwidth 2
 }
 
 # Plugins
