@@ -103,8 +103,8 @@ plug-old lsp https://github.com/kak-lsp/kak-lsp %{
     hook global WinSetOption filetype=(rust) %{
         lsp-enable-window
 
-        hook global BufWritePre .* lsp-formatting
-        set-option global lsp_auto_highlight_references true
+        # hook global BufWritePre .* lsp-formatting
+        # set-option global lsp_auto_highlight_references true
         set-option global lsp_diagnostic_line_error_sign "!"
         set-option global lsp_diagnostic_line_warning_sign "?"
         set-face global DiagnosticError red+u
@@ -118,7 +118,7 @@ plug-old lsp https://github.com/kak-lsp/kak-lsp %{
         hook -once -always window WinSetOption filetype=.* %{
             remove-hooks window semantic-tokens
         }
-        lsp-inlay-diagnostics-enable window
+        # lsp-inlay-diagnostics-enable window
 
         map global user r ": lsp-rename-prompt<ret>" -docstring "rename symbol"
         map global user a ": lsp-code-actions<ret>" -docstring "code actions"
