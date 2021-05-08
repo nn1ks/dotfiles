@@ -12,6 +12,8 @@ GIT_PS1_SHOWUNTRACKEDFILES=1
 GIT_PS1_SHOWUPSTREAM="auto"
 prompt() {
     status="$?"
+    user="\[\e[1;35m\]\u\[\e[00m\]"
+    hostname="\[\e[1;35m\]\h\[\e[00m\]"
     directory="\[\e[1;34m\]\w\[\e[00m\]"
     git="$(__git_ps1 ' \[\e[1;36m\] %s\[\e[00m\]')"
     if [ -n "$GUIX_ENVIRONMENT" ]; then
@@ -22,7 +24,7 @@ prompt() {
     else
         indicator=" \[\e[1;31m\]$\[\e[00m\]"
     fi
-    PS1="${directory}${git}${env}${indicator} "
+    PS1="${user}@${hostname}:${directory}${git}${env}${indicator} "
 }
 PROMPT_COMMAND="prompt"
 
